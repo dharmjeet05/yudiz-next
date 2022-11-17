@@ -4,7 +4,6 @@ import Axios from "../configs/Axios"
 async function getProducts(page, limit) {
   const skipp = (page - 1) * limit
   const products = await Axios.get(`/products?skip=${skipp}&limit=${limit}`)
-  console.log('products', products)
   return products?.data
 }
 
