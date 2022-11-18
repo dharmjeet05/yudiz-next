@@ -12,32 +12,32 @@ export default function Blog() {
 
   const router = useRouter()
 
-  const products = useProducts(page, limit)
+  const { data, isLoading } = useProducts(page, limit)
 
   useEffect(() => {
     if (router.query.page) {
       setPage(router.query.page)
     }
-  }, [router.query.page, setPage])
-
-  useEffect(() => {
     if (router.query.limit) {
       setLimit(router.query.limit)
     }
-  }, [router.query.limit, setLimit])
+  }, [])
 
-  function handleChange(e, type) {
+  async function handleChange(e, type) {
     switch (type) {
       case "limit":
-        setLimit(e.target.value)
-        setPage(1)
+        console.log('e.target.value', e.target.value)
+        await setLimit(e.target.value)
+        await setPage(1)
         break
       default:
         break
     }
   }
 
-  console.log('products?.data', products?.data)
+  if (isLoading) {
+    return <h1>Loading.....</h1>
+  }
 
   return (
     <>
@@ -46,13 +46,21 @@ export default function Blog() {
       </Head>
       <div className={styles.container}>
         <h1><span onClick={() => setPage(page - 1)}>-</span>{page}<span onClick={() => setPage(page + 1)}>+</span></h1>
-        <label for="limit">Limit: </label>
-        <select name="limit" id="limit" value={10} onChange={(e) => handleChange(e, 'limit')}>
+        <label htmlFor="limit">Limit: </label>
+        <select name="limit" id="limit" defaultValue={10} onChange={(e) => handleChange(e, 'limit')}>
           <option value={5}>5</option>
           <option value={10}>10</option>
           <option value={15}>15</option>
           <option value={20}>20</option>
         </select>
+      </div>
+
+      <div>
+        {data?.products?.map((product) => (
+          <div key={product.id}>
+            <h1>{product.title}</h1>
+          </div>
+        ))}
       </div>
     </>
   )
